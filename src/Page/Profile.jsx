@@ -1,10 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const Profile = () => {
 	const [open, setOpen] = useState(false)
 	const [name, setName] = useState('Tony')
 	const [firstName, setFirstName] = useState('Jarvis')
+	const user = useSelector((state) => state.user)
+	console.log(user)
 
 	const handleSubmit =  (e) => {
 		e.preventDefault()

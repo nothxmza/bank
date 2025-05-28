@@ -1,11 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { setUser } from '../redux/userSlice.js';
 
 const Login = () => {
 	const [userName, setUserName] = useState('')
 	const [password, setPassword] = useState('')
 	const navigate = useNavigate()
+	const dispatch = useDispatch()
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
@@ -28,6 +31,9 @@ const Login = () => {
 				body: JSON.stringify(user),
 			})
 			if(response.ok){
+				const data = await response.json()
+				console.log(data)
+				dispatch(setUser({user: userName, token: data.body.token}))
 				navigate('/profile')
 			}
 		}catch (error) {

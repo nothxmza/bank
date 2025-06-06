@@ -3,42 +3,41 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { setUser } from '../redux/userSlice.js';
+import { api } from '../api/api.js';
 
 const Login = () => {
-	const [userName, setUserName] = useState('')
+	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
-		if (userName === '' || password === '') {
-			alert('Manque un champ')
+		if (email === '' || password === '') {
+			alert("Please fill in all fields")
 			return
 		}
 		const user = {
-			email: userName,
+			email: email,
 			password: password,
 		}
-		console.log(user)
-		
 		try{
-			const response = await fetch('http://localhost:3001/api/v1/user/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(user),
-			})
-			if(response.ok){
-				const data = await response.json()
-				console.log(data)
-				dispatch(setUser({user: userName, token: data.body.token}))
+			const response = await api.login(user)
+			if(response.status === 200) {
+				const data = await api.getUser(response.body.token)
+				const userName = {
+					firstName: data.body.firstName,
+					lastName: data.body.lastName,
+				}
+				dispatch(setUser({user: userName, token: response.body.token}))
 				navigate('/profile')
+			}else if(response.status === 400) {
+				alert(response.message || "invalid credentials")
+			}else if(response.status === 500) {
+				alert(response.message || "internal server error")
 			}
 		}catch (error) {
 				console.error('Error:', error)
-				
 		}
 	}
 
@@ -51,16 +50,16 @@ const Login = () => {
 					<form>
 						<div className="input-wrapper">
 							<label for="username">Username</label>
-							<input type="text" id="username" onChange={(e) => setUserName(e.target.value)}/>
+							<input type="text" id="username" onChange={(e) => setEmail(e.target.value)}/>
 						</div>
 						<div className="input-wrapper">
 							<label for="password">Password</label>
 							<input type="password" id="password" onChange={(e) => setPassword(e.target.value)}/>
 						</div>
-						<div className="input-remember">
+						{/* <div className="input-remember">
 							<input type="checkbox" id="remember-me" />
 							<label for="remember-me">Remember me</label>
-						</div>
+						</div> */}
 						{/* <!-- SHOULD BE THE BUTTON BELOW --> */}
 						<button className="sign-in-button" onClick={handleSubmit}>Sign In</button> 
 					</form>

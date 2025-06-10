@@ -8,6 +8,7 @@ import Login from './Page/Login.jsx'
 import Profile from './Page/Profile.jsx'
 import { store } from './redux/store.js'
 import { Provider } from 'react-redux'
+import { ProtectedRoute } from './components/ProtectedRoute.jsx'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<Layout><App /></Layout>} />
         <Route path="/login" element={<Layout><Login /></Layout>} />
-        <Route path="/profile" element={<Layout><Profile /></Layout>} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<Layout><Profile /></Layout>} />
+        </Route>
       </Routes>
     </BrowserRouter>
   </Provider>

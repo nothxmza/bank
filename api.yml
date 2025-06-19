@@ -1,0 +1,161 @@
+openapi: 3.0.4
+info:
+  title: ArgentBank transactions API
+  description: API qui permet aux utilisateurs de visualiser et de gérer leurs transactions
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3001/api/transaction/v1
+security:
+  - bearerAuth: []
+
+paths:
+  /user/{userId}/transactions:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+
+    get:
+      tags:
+        - transactions
+      summary: Retourne les transactions pour le mois en cours groupées par compte
+      description: Retourne toutes les transactions passées pour le mois en cours, groupées par compte pour un utilisateur spécifique
+      responses:
+        '200':
+          description: Retourne un tableau avec les différents comptes et les transactions effectuées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionByAccount'
+        '401':
+          description: Token manquant ou invalid
+        '404':
+          description: Aucune transaction trouvée pour le mois en cours
+        '500':
+          description: Erreur interne du serveur
+
+  /user/{userId}/transactions/{transactionId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: path
+        required: true
+        schema:
+          type: string
+
+    get:
+      tags:
+        - transactions
+      summary: Retourne les détails d'une transaction
+      description: Retourne les détails d'une transaction spécifique
+      responses:
+        '200':
+          description: Retourne un objet contenant les détails de la transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Token manquant ou invalid
+        '404':
+          description: La transaction n'existe pas
+        '500':
+          description: Erreur interne du serveur
+
+    put:
+      tags:
+        - transactions
+      summary: Ajouter, modifier ou supprimer des informations sur une transaction
+      description: Permet d'ajouter, modifier ou supprimer les informations d'une transaction existante
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionUpdate'
+      responses:
+        '200':
+          description: Retourne un message confirmant la réussite
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Transaction mise à jour avec succès
+        '400':
+          description: Requête invalide
+        '401':
+          description: Token manquant ou invalid
+        '404':
+          description: Transaction non trouvée
+        '500':
+          description: Erreur interne du serveur
+
+   
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    TransactionByAccount:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: compte1
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+
+    Transaction:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          example: transaction1
+        amount:
+          type: number
+          example: 120
+        date:
+          type: string
+          format: date-time
+          example: "2025-06-13T15:00:00Z"
+        transactionType:
+          type: string
+          example: Carte
+        detail:
+          type: string
+          example: Amazon Payment
+        category:
+          type: string
+          example: Sport
+        note:
+          type: string
+          example: test de note
+          
+    TransactionUpdate:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          example: transaction1
+        category:
+          type: string
+          example: nourriture
+        note:
+          type: string
+          example: pas bon

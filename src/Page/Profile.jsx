@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '../redux/userSlice';
@@ -18,17 +17,17 @@ const Profile = () => {
 			alert('Please fill in all fields')
 			return
 		}
-		console.log(lastName, firstName)
 		let user = {
 			firstName: firstName,
 			lastName: lastName,
 		}
 		try{
 			const response = await api.updateUserName(user, data.token)
-			console.log(response)
 			if(response.status === 200){
 				dispatch(updateUser({firstName: user.firstName, lastName: user.lastName}))
 				setOpen(false)
+				setFirstName('')
+				setLastName('')
 			}else if(response.status === 400) {
 				alert(response.message || "invalid fields")
 			}else if(response.status === 500) {
@@ -47,12 +46,16 @@ const Profile = () => {
 				{open && (
 					<div className="edit-form">
 						<form>
-							<label htmlFor="name"></label>
-							<input type="text" id="name" placeholder="lastName" onChange={(e) => setLastName(e.target.value)} required/>
-							<label htmlFor="firstname"></label>
-							<input type="text" id="firstname" placeholder="firstName" onChange={(e) => setFirstName(e.target.value)} required/>
-							<button className="save-button" onClick={handleSubmit}>Save</button>
-							<button className="cancel-button" onClick={() => setOpen(false)}>Cancel</button>
+							<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 15}}>
+								<div style={{display: 'flex', gap: 10}}>
+									<input type="text" id="name" placeholder="lastName" onChange={(e) => setLastName(e.target.value)} required style={{padding: 10, width: 200}}/>
+									<input type="text" id="firstname" placeholder="firstName" onChange={(e) => setFirstName(e.target.value)} required style={{padding: 10, width: 200}}/>
+								</div>
+								<div style={{display: 'flex', gap: 10}}>
+									<button className="save-button" onClick={handleSubmit} style={{padding: "5px 10px"}}>Save</button>
+									<button className="cancel-button" onClick={() => setOpen(false)} style={{padding: "5px 10px"}}>Cancel</button>
+								</div>
+							</div>
 						</form>
 					</div>
 				)}

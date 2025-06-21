@@ -33,7 +33,7 @@ export const Layout = ({children}) => {
 						</Link>
 					</div>
 				):(
-					<div>
+					<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 20}}>
 						<a className="main-nav-item" >
 							<i className="fa fa-user-circle"></i>
 							{data.user.firstName}

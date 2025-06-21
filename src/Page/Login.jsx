@@ -49,17 +49,13 @@ const Login = () => {
 					<h1>Sign In</h1>
 					<form>
 						<div className="input-wrapper">
-							<label for="username">Username</label>
+							<label htmlFor="username">Username</label>
 							<input type="text" id="username" onChange={(e) => setEmail(e.target.value)}/>
 						</div>
 						<div className="input-wrapper">
-							<label for="password">Password</label>
+							<label htmlFor="password">Password</label>
 							<input type="password" id="password" onChange={(e) => setPassword(e.target.value)}/>
 						</div>
-						{/* <div className="input-remember">
-							<input type="checkbox" id="remember-me" />
-							<label for="remember-me">Remember me</label>
-						</div> */}
 						{/* <!-- SHOULD BE THE BUTTON BELOW --> */}
 						<button className="sign-in-button" onClick={handleSubmit}>Sign In</button> 
 					</form>

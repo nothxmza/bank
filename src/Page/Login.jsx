@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { setUser } from '../redux/userSlice.js';
+import { login, setUser } from '../redux/userSlice.js';
 import { api } from '../api/api.js';
 
 const Login = () => {
@@ -10,6 +10,7 @@ const Login = () => {
 	const [password, setPassword] = useState('')
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
+	const isLoading = useSelector((state) => state.user.isLoading);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
@@ -22,23 +23,19 @@ const Login = () => {
 			password: password,
 		}
 		try{
-			const response = await api.login(user)
-			if(response.status === 200) {
-				const data = await api.getUser(response.body.token)
-				const userName = {
-					firstName: data.body.firstName,
-					lastName: data.body.lastName,
-				}
-				dispatch(setUser({user: userName, token: response.body.token}))
-				navigate('/profile')
-			}else if(response.status === 400) {
-				alert(response.message || "invalid credentials")
-			}else if(response.status === 500) {
-				alert(response.message || "internal server error")
+			const response = await dispatch(login(user));
+			if(login.fulfilled.match(response)) {
+				navigate('/profile');
+			}else{
+				 alert(response.payload || "Identifiants invalides");
 			}
 		}catch (error) {
 				console.error('Error:', error)
 		}
+	}
+
+	if (isLoading) {
+		return <div>Loading...</div>;
 	}
 
 	return (

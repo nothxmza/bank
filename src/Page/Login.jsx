@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { login, setUser } from '../redux/userSlice.js';
-import { api } from '../api/api.js';
 
 const Login = () => {
 	const [email, setEmail] = useState('')
